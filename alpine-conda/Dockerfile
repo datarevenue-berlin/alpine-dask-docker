@@ -1,8 +1,8 @@
 FROM frolvlad/alpine-glibc:alpine-3.9_glibc-2.29
 LABEL MAINTAINER="Jim Crist"
 
-ENV CONDA_VERSION 4.6.14
-ENV CONDA_MD5 718259965f234088d785cad1fbd7de03
+ENV CONDA_VERSION 4.7.12
+ENV CONDA_MD5 0dba759b8ecfc8948f626fa18785e3d8
 
 # Tell Python not to recreate the bytecode files. Since this is a docker image,
 # these will be recreated every time, writing them just uses unnecessary disk
@@ -14,7 +14,6 @@ ENV PYTHONDONTWRITEBYTECODE=true
 # - Install miniconda install dependencies
 # - Download miniconda and check the md5sum
 # - Install miniconda
-# - Downgrade and pin conda to 4.6.8 (can remove once 4.7 is released)
 # - Install tini
 # - Remove all conda managed static libraries
 # - Remove all conda managed *.pyc files
@@ -32,8 +31,8 @@ RUN apk add --no-cache wget bzip2 \
     && ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh \
     && echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/anaconda/.profile \
     && echo "conda activate base" >> /home/anaconda/.profile \
-    && /opt/conda/bin/conda install conda==4.6.8 \
-    && echo "conda ==4.6.8" >> /opt/conda/conda-meta/pinned \
+    && /opt/conda/bin/conda install conda==$CONDA_VERSION \
+    && echo "conda==$CONDA_VERSION" >> /opt/conda/conda-meta/pinned \
     && /opt/conda/bin/conda install --freeze-installed tini -y \
     && find /opt/conda/ -follow -type f -name '*.a' -delete \
     && find /opt/conda/ -follow -type f -name '*.pyc' -delete \
