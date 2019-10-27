@@ -23,7 +23,7 @@ ENV PYTHONDONTWRITEBYTECODE=true
 # - Uninstall miniconda install dependencies
 # Allow chown into opt so that the user can write/ create additional installations
 
-RUN apk add --no-cache wget bzip2 bash findutils \
+RUN apk add --no-cache wget bzip2 \
     && addgroup -S anaconda \
     && adduser -D -u 10151 anaconda -G anaconda \
     && wget --quiet https://repo.continuum.io/miniconda/${CONDA_FILENAME} \
@@ -41,7 +41,7 @@ RUN apk add --no-cache wget bzip2 bash findutils \
     && find /opt/conda/ -follow -type f -name '*.a' -delete \
     && find /opt/conda/ -follow -type f -name '*.pyc' -delete \
     && /opt/conda/bin/conda clean -afy \
-    && chown -R anaconda:anaconda /opt/ \
+    && chown -R anaconda:anaconda /opt/conda \
     && apk del wget bzip2
 
 COPY start.sh /usr/local/bin/
