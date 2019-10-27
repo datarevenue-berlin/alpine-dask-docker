@@ -1,7 +1,7 @@
 FROM frolvlad/alpine-glibc:alpine-3.9_glibc-2.29
 LABEL MAINTAINER="Jim Crist"
 
-ENV CONDA_VERSION 4.7.12
+ENV CONDA_VERSION 4.7.12.1
 ENV CONDA_MD5 0dba759b8ecfc8948f626fa18785e3d8
 
 # Tell Python not to recreate the bytecode files. Since this is a docker image,
