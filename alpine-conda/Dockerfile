@@ -1,8 +1,10 @@
 FROM frolvlad/alpine-glibc:alpine-3.9_glibc-2.29
 LABEL MAINTAINER="Jim Crist"
 
-ENV CONDA_VERSION 4.7.12.1
-ENV CONDA_MD5 0dba759b8ecfc8948f626fa18785e3d8
+ENV CONDA_VERSION 4.7.12
+ENV CONDA_PATCH_VERSION 4.7.12.1
+ENV CONDA_FILENAME Miniconda3-$CONDA_PATCH_VERSION-Linux-x86_64.sh
+ENV CONDA_FILENAME_MD5 81c773ff87af5cfac79ab862942ab6b3
 
 # Tell Python not to recreate the bytecode files. Since this is a docker image,
 # these will be recreated every time, writing them just uses unnecessary disk
@@ -20,13 +22,14 @@ ENV PYTHONDONTWRITEBYTECODE=true
 # - Cleanup conda files
 # - Uninstall miniconda install dependencies
 # Allow chown into opt so that the user can write/ create additional installations
+
 RUN apk add --no-cache wget bzip2 bash findutils \
     && addgroup -S anaconda \
     && adduser -D -u 10151 anaconda -G anaconda \
-    && wget --quiet https://repo.continuum.io/miniconda/Miniconda3-$CONDA_VERSION-Linux-x86_64.sh \
-    && echo "${CONDA_MD5}  Miniconda3-$CONDA_VERSION-Linux-x86_64.sh" > miniconda.md5 \
+    && wget --quiet https://repo.continuum.io/miniconda/${CONDA_FILENAME} \
+    && echo "${CONDA_FILENAME_MD5}  ${CONDA_FILENAME}" > miniconda.md5 \
     && if [ $(md5sum -c miniconda.md5 | awk '{print $2}') != "OK" ] ; then exit 1; fi \
-    && mv Miniconda3-$CONDA_VERSION-Linux-x86_64.sh miniconda.sh \
+    && mv ${CONDA_FILENAME} miniconda.sh \
     && sh ./miniconda.sh -b -p /opt/conda \
     && rm miniconda.sh miniconda.md5 \
     && ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh \
