@@ -19,6 +19,7 @@ ENV PYTHONDONTWRITEBYTECODE=true
 # - Remove all conda managed *.pyc files
 # - Cleanup conda files
 # - Uninstall miniconda install dependencies
+# Allow chown into opt so that the user can write/ create additional installations
 RUN apk add --no-cache wget bzip2 \
     && addgroup -S anaconda \
     && adduser -D -u 10151 anaconda -G anaconda \
@@ -37,7 +38,7 @@ RUN apk add --no-cache wget bzip2 \
     && find /opt/conda/ -follow -type f -name '*.a' -delete \
     && find /opt/conda/ -follow -type f -name '*.pyc' -delete \
     && /opt/conda/bin/conda clean -afy \
-    && chown -R anaconda:anaconda /opt/conda \
+    && chown -R anaconda:anaconda /opt/ \
     && apk del wget bzip2
 
 USER anaconda:anaconda
