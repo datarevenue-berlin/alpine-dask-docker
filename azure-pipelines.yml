@@ -1,5 +1,5 @@
 # Docker
-# Build a Docker image 
+# Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 schedules:
@@ -11,7 +11,12 @@ schedules:
   always: true
 
 trigger:
-- master
+  tags:
+    include:
+      - '*'
+  branches:
+    include:
+      - 'master'
 
 resources:
 - repo: self
@@ -23,12 +28,14 @@ variables:
 stages:
 - stage: Build
   displayName: Build image
-  jobs:  
+  jobs:
   - job: Build
     displayName: Build
     pool:
       vmImage: 'ubuntu-latest'
     steps:
+    - script: VERSION_TAG=`git describe --tags` && echo "##vso[task.setvariable variable=VERSION_TAG]$VERSION_TAG"
+      displayName: Set the tag name as an environment variable
     - task: Docker@2
       displayName: Build an image
       inputs:
@@ -37,7 +44,8 @@ stages:
         repository: $(repository)
         containerRegistry: dockerhubServiceConnection
         tags: |
-          $(tag)
+          $(VERSION_TAG)
+          latest
     - task: Docker@2
       displayName: Login to Docker Hub
       inputs:
@@ -50,4 +58,5 @@ stages:
         repository: $(repository)
         containerRegistry: dockerhubServiceConnection
         tags: |
-          $(tag)
+          $(VERSION_TAG)
+          latest
